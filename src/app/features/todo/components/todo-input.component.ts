@@ -142,12 +142,8 @@ export class TodoInputComponent {
     this.recognition.onerror = (e: any) => {
       this.listening.set(false);
       this.recognition = null;
-      if (e.error === 'network') {
-        this.aiError.set('Voice requires Chrome with internet access.');
-      } else if (e.error === 'not-allowed') {
-        this.aiError.set('Mic access denied. Allow microphone in browser settings.');
-      } else if (e.error !== 'no-speech') {
-        this.aiError.set('Voice error: ' + e.error);
+      if (e.error !== 'no-speech' && e.error !== 'aborted') {
+        this.aiError.set('Voice unavailable.');
       }
       this.cdr.markForCheck();
     };
