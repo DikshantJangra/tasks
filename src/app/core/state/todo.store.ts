@@ -1,17 +1,21 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Todo, TodoFilter, TodoState } from '../models/todo.model';
 import { TodoRepository } from '../repositories/todo.repository';
 import { finalize } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class TodoStore {
   private readonly repository = inject(TodoRepository);
+  private readonly platformId = inject(PLATFORM_ID);
 
-  // State
+  private get isLocal(): boolean {
+    return isPlatformBrowser(this.platformId) && window.location.hostname === 'localhost';
+  }
+
+  // Initialize synchronously from localStorage — no flash, no spinner
   private readonly state = signal<TodoState>({
-    todos: [],
+    todos: isPlatformBrowser(inject(PLATFORM_ID)) ? inject(TodoRepository).getTodosSync() : [],
     filter: 'all',
     loading: false,
     error: null
@@ -47,14 +51,14 @@ export class TodoStore {
   });
 
   // Actions
-  async loadTodos() {
+  loadTodos() {
+    if (!this.isLocal) return; // already loaded synchronously from localStorage
     this.state.update(s => ({ ...s, loading: true, error: null }));
-    
     this.repository.getTodos()
       .pipe(finalize(() => this.state.update(s => ({ ...s, loading: false }))))
       .subscribe({
         next: (todos) => this.state.update(s => ({ ...s, todos })),
-        error: (err) => this.state.update(s => ({ ...s, error: 'Failed to load todos' }))
+        error: () => this.state.update(s => ({ ...s, error: 'Failed to load todos' }))
       });
   }
 

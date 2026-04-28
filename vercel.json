@@ -1,4 +1,6 @@
 {
+  "buildCommand": "sed -i \"s|%%NVIDIA_API_KEY%%|$NVIDIA_API_KEY|g\" src/environments/environment.prod.ts && npm run build",
+  "outputDirectory": "dist/angular-todo/browser",
   "routes": [
     { "handle": "filesystem" },
     { "src": "/.*", "dest": "/index.html" }

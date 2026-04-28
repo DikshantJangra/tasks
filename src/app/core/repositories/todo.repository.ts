@@ -49,6 +49,10 @@ export class TodoRepository {
     this.lsWrite(fn(this.lsGet()));
   }
 
+  getTodosSync(): Todo[] {
+    return this.lsGet();
+  }
+
   getTodos(): Observable<Todo[]> {
     if (!this.isLocal) return of(this.lsGet());
     return this.http.get<Todo[]>(`${this.apiUrl}?_sort=order`).pipe(
