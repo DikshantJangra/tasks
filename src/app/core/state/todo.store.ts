@@ -109,19 +109,11 @@ export class TodoStore {
 
   clearCompleted() {
     const completedIds = this.state().todos.filter(t => t.completed).map(t => t.id);
-    const previousTodos = this.state().todos;
-
-    this.state.update(s => ({
-      ...s,
-      todos: s.todos.filter(t => !t.completed)
-    }));
-
-    // In a real API, we'd use a bulk delete. For now, we simulate success.
-    // Ideally, we'd loop through deletes or use a custom endpoint.
+    this.state.update(s => ({ ...s, todos: s.todos.filter(t => !t.completed) }));
+    completedIds.forEach(id => this.repository.deleteTodo(id).subscribe());
   }
 
   updateOrder(todos: Todo[]) {
     this.state.update(s => ({ ...s, todos }));
-    // In real app, persist order change to backend
   }
 }

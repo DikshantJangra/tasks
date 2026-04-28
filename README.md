@@ -2,7 +2,7 @@
 
 A production-grade, high-utility Todo application built with **Angular 21** and **Tailwind CSS v4**. Designed around a high-contrast black-and-white system aesthetic with full CRUD, filtering, drag-and-drop reordering, a mock REST API, Docker support, and Vercel/Netlify deployment.
 
-🔗 **Live Demo:** [https://angular-todo.vercel.app](https://angular-todo.vercel.app)
+🔗 **Live Demo:** [https://tasks-pink-eta.vercel.app](https://tasks-pink-eta.vercel.app)
 📦 **Repository:** [https://github.com/DikshantJangra/tasks](https://github.com/DikshantJangra/tasks)
 
 ---
@@ -206,17 +206,6 @@ CMD ["nginx", "-g", "daemon off;"]
   ]
 }
 ```
-
-### Netlify
-
-1. Connect your GitHub repo at [app.netlify.com](https://app.netlify.com).
-2. Set the following in build settings:
-   - **Build command:** `npm run build`
-   - **Publish directory:** `dist/angular-todo/browser`
-3. Add a `_redirects` file to `public/` if needed:
-   ```
-   /*  /index.html  200
-   ```
 
 ---
 
