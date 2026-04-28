@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  nvidiaApiKey: ''
+  deepgramKey: 'YOUR_DEVELOPMENT_KEY_HERE'
 };

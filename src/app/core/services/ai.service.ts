@@ -9,11 +9,11 @@ export class AiService {
 
   generateTasks(prompt: string): Observable<string[]> {
     return this.http.post<any>('/api/ai', {
-      model: 'deepseek-ai/deepseek-r1',
+      model: 'meta/llama-3.1-8b-instruct',
       messages: [
         {
           role: 'system',
-          content: 'You are a task generator. Given a user prompt, return ONLY a JSON array of concise task strings. No explanation, no markdown, no reasoning, just the raw JSON array. Example: ["Task 1", "Task 2"]'
+          content: 'You are a task generator. Given a user prompt, return ONLY a JSON array of concise task strings. No explanation, no markdown, just the raw JSON array. Example: ["Task 1", "Task 2"]'
         },
         { role: 'user', content: prompt }
       ],
