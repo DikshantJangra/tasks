@@ -26,11 +26,11 @@ export class TodoRepository {
 
   private readonly apiUrl = 'http://localhost:3000/todos';
 
-  private lsRead(): Todo[] {
+  private lsRead(): Todo[] | null {
     try {
       const raw = localStorage.getItem(LS_KEY);
       return raw ? JSON.parse(raw) : null;
-    } catch { return null as any; }
+    } catch { return null; }
   }
 
   private lsWrite(todos: Todo[]): void {
@@ -38,7 +38,11 @@ export class TodoRepository {
   }
 
   private lsGet(): Todo[] {
-    return this.lsRead() ?? SEED.map(t => ({ ...t }));
+    const stored = this.lsRead();
+    if (stored !== null) return stored;
+    const seed = SEED.map(t => ({ ...t }));
+    this.lsWrite(seed);
+    return seed;
   }
 
   private lsUpdate(fn: (todos: Todo[]) => Todo[]): void {
