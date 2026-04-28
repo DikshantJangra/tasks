@@ -110,29 +110,53 @@ export class TodoInputComponent {
 
   toggleVoice() {
     if (this.listening()) {
+      this.listening.set(false);
       this.recognition?.stop();
+      this.recognition = null;
+      this.cdr.markForCheck();
       return;
     }
 
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SR) { this.aiError.set('Voice not supported in this browser.'); return; }
+    if (!SR) { this.aiError.set('Voice not supported.'); return; }
 
     this.recognition = new SR();
     this.recognition.lang = 'en-US';
-    this.recognition.interimResults = false;
-    this.recognition.maxAlternatives = 1;
+    this.recognition.continuous = true;
+    this.recognition.interimResults = true;
 
-    this.recognition.onstart = () => { this.listening.set(true); this.cdr.markForCheck(); };
-    this.recognition.onend = () => { this.listening.set(false); this.cdr.markForCheck(); };
+    this.recognition.onstart = () => {
+      this.listening.set(true);
+      this.cdr.markForCheck();
+    };
+
     this.recognition.onresult = (e: any) => {
-      this.title = e.results[0][0].transcript;
-      this.cdr.markForCheck();
-    };
-    this.recognition.onerror = () => {
-      this.listening.set(false);
+      let transcript = '';
+      for (let i = 0; i < e.results.length; i++) {
+        transcript += e.results[i][0].transcript;
+      }
+      this.title = transcript;
       this.cdr.markForCheck();
     };
 
-    this.recognition.start();
+    this.recognition.onerror = (e: any) => {
+      console.error('Speech error:', e.error);
+      this.listening.set(false);
+      this.recognition = null;
+      this.cdr.markForCheck();
+    };
+
+    this.recognition.onend = () => {
+      this.listening.set(false);
+      this.recognition = null;
+      this.cdr.markForCheck();
+    };
+
+    try {
+      this.recognition.start();
+    } catch (err) {
+      this.aiError.set('Mic access denied.');
+      this.listening.set(false);
+    }
   }
 }

@@ -1,29 +1,4 @@
 {
-  "todos": [
-    {
-      "id": "1",
-      "title": "Design System UI",
-      "completed": true,
-      "order": 0
-    },
-    {
-      "id": "2",
-      "title": "Implement Signal Store",
-      "completed": false,
-      "order": 1
-    },
-    {
-      "id": "3",
-      "title": "Setup Dockerization",
-      "completed": false,
-      "order": 2
-    },
-    {
-      "id": "Cihyj_TN_mU",
-      "title": "Sleep",
-      "completed": false,
-      "order": 3
-    }
-  ],
+  "todos": [],
   "$schema": "./node_modules/json-server/schema.json"
 }
