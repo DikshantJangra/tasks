@@ -1,0 +1,38 @@
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
+
+@Injectable({ providedIn: 'root' })
+export class AiService {
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = 'https://integrate.api.nvidia.com/v1/chat/completions';
+
+  generateTasks(prompt: string): Observable<string[]> {
+    return this.http.post<any>(this.apiUrl, {
+      model: 'deepseek-ai/deepseek-r1',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a task generator. Given a user prompt, return ONLY a JSON array of concise task strings. No explanation, no markdown, no reasoning, just the raw JSON array. Example: ["Task 1", "Task 2"]'
+        },
+        { role: 'user', content: prompt }
+      ],
+      temperature: 0.6,
+      max_tokens: 300
+    }, {
+      headers: {
+        'Authorization': `Bearer ${environment.nvidiaApiKey}`,
+        'Content-Type': 'application/json'
+      }
+    }).pipe(
+      map(res => {
+        const content: string = res.choices?.[0]?.message?.content ?? '[]';
+        const match = content.match(/\[[\s\S]*\]/);
+        try { return match ? JSON.parse(match[0]) : []; }
+        catch { return []; }
+      })
+    );
+  }
+}
